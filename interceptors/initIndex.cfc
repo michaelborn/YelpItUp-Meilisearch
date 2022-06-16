@@ -9,25 +9,21 @@ component {
             var recreateIndex = true;
 
             if( recreateIndex ){
-                getESClient().deleteIndex( "reviews" );
+                getIndexClient().delete( "reviews" );
             }
 
-            if ( !getESClient().indexExists( "reviews" ) ){
-                var index = new models.ReviewsIndex();
-                getIndexBuilder().new(
-                    "reviews",
-                    {
-                        "mappings" : index.getMappings(),
-                        "settings" : index.getSettings()
-                    }
-                ).save();
-            }
+            // if ( !getESClient().indexExists( "reviews" ) ){
+                var result = getIndexClient().create(
+                    uid = "reviews",
+                    primaryKey = "review_id"
+                );
+            // }
 
             if ( recreateIndex ){
-                populateIndex(
+                populateReviews(
                     file = getSetting( "contentPath" ) & "yelp_academic_dataset_review.json",
                     index = "reviews",
-                    idKey = "review_id",
+                    primaryKey = "review_id",
                     maxToPopulate = 1000
                 );
             }
@@ -38,10 +34,10 @@ component {
         }
     }
 
-    function populateIndex(
+    function populateReviews(
         required string file,
         required string index,
-        required string idKey,
+        required string primaryKey,
         numeric maxToPopulate = 100
     ){
         if ( !fileExists( arguments.file ) ){
@@ -56,25 +52,13 @@ component {
             if ( isJSON( json ) ){
                 var data = deSerializeJSON( json );
 
-                if ( arguments.index == "businesses" ) {
-                    if ( lcase( data.state ) != "ny"){
-                        continue;
-                    } else {
-                        // clean up bad values
-                        data["is_open"] = !!data["is_open"];
-                    }
-                }
-                if ( arguments.index == "reviews" ){
-                    // clean up bad values
-                    data["date"] = dateTimeFormat( lsParseDateTime( data["date"] ), "yyyy-MM-dd'T'HH:nn:ssXXX");
-                }
-                getDocument()
-                    .new(
-                        index = arguments.index,
-                        properties = data
-                    )
-                    .setId( data[ arguments.idKey ] )
-                    .save();
+                // clean up bad values
+                data["date"] = dateTimeFormat( lsParseDateTime( data["date"] ), "yyyy-MM-dd'T'HH:nn:ssXXX");
+                getDocumentClient().addOrReplace(
+                    index = arguments.index,
+                    documents = [ data ],
+                    primaryKey = primaryKey
+                );
 
                 populatedCount++;
             }
@@ -83,9 +67,7 @@ component {
         fileClose( fileObject );
     }
 
-    Client function getESClient() provider="Client@cbElasticsearch"{}
+    Indexes function getIndexClient() provider="Indexes@cbmeilisearch"{}
 
-    IndexBuilder function getIndexBuilder() provider="IndexBuilder@cbElasticsearch"{}
-
-    Document function getDocument() provider="Document@cbElasticsearch"{}
+    Documents function getDocumentClient() provider="Documents@cbmeilisearch"{}
 }

@@ -21,3 +21,6 @@ modules/*
 
 ## Don't track the big datasets
 **.tgz
+
+## Meilisearch data storage
+meili_data/

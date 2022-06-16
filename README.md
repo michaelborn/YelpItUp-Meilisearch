@@ -1,10 +1,8 @@
 # YelpItUp
 
-A sample Elasticsearch app using the [Yelp dataset](https://www.yelp.com/dataset/), [Coldbox](https://www.coldbox.org/), and [CBElasticsearch](https://cbelasticsearch.ortusbooks.com/).
+A sample Meilisearch app using the [Yelp dataset](https://www.yelp.com/dataset/), [Coldbox](https://www.coldbox.org/), and [cbMeilisearch](https://github.com/michaelborn/cbmeilisearch).
 
 ![YelpItUp app showing sample Yelp reviews for "pickle"](includes/images/yelp-it-up-pickle-search.png)
-
-For a full description of how this app works, check out my ITB 2020 CBElasticsearch talk [presentation](https://slides.com/michaelborn/power-up-with-cbelasticsearch#/) or [github repo](https://github.com/michaelborn/ITB2020-CBElasticsearch-talk).
 
 ## Getting Started
 
@@ -12,7 +10,7 @@ For a full description of how this app works, check out my ITB 2020 CBElasticsea
 2. [Install CommandBox if you don't have it](https://commandbox.ortusbooks.com/getting-started-guide)
 3. Download the [Yelp dataset](https://www.yelp.com/dataset) and extract to `resources/downloads/yelp_dataset`
 4. Install dependencies - `box install`
-5. Start up a docker Elasticsearch container - `docker run -d -p 9210:9200 -e "discovery.type=single-node" elasticsearch:7.6.2`
+5. Start up a docker Meilisearch container - `docker run --detach --rm -p 7700:7700 -e MEILI_MASTER_KEY='ortus_is_awesome' -v $(pwd)/meili_data:/meili_data getmeili/meilisearch meilisearch --env="development"`
 6. Copy `.env.example` to `.env`
 7. Start this app - `box start`
 
@@ -28,8 +26,8 @@ For a full description of how this app works, check out my ITB 2020 CBElasticsea
 
 Copyright 2020 (and on) - [Michael Born](https://michaelborn.me/)
 
-* [Homepage](https://bitbucket.org/michaelborn_me/cfevents/src/master/)
-* [Issue Tracker](https://bitbucket.org/michaelborn_me/cfevents/issues?status=new&status=open)
-* [New BSD License](https://bitbucket.org/michaelborn_me/cfevents/src/master/LICENSE.txt)
+* [Homepage](https://github.com/michaelborn/YelpItUp-Meilisearch/)
+* [Issue Tracker](https://github.com/michaelborn/YelpItUp-Meilisearch/issues)
+* [New BSD License](https://github.com/michaelborn/YelpItUp-Meilisearch/src/master/LICENSE.txt)
 
 [![cfmlbadges](https://cfmlbadges.monkehworks.com/images/badges/made-with-cfml.svg)](https://cfmlbadges.monkehworks.com) [![cfmlbadges](https://cfmlbadges.monkehworks.com/images/badges/tested-with-testbox.svg)](https://cfmlbadges.monkehworks.com) [![cfmlbadges](https://cfmlbadges.monkehworks.com/images/badges/powered-by-coffee.svg)](https://cfmlbadges.monkehworks.com) [![cfmlbadges](https://cfmlbadges.monkehworks.com/images/badges/i-can-bench-press-ben-nadel.svg)](https://cfmlbadges.monkehworks.com)

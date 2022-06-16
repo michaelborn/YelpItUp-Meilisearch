@@ -1,10 +1,11 @@
 <cfoutput>
     <article class="p-6 border-solid border-b-2">
-        <cfif review.keyExists( "highlights" ) && !structIsEmpty(review.highlights)>
-            <cfif review.highlights.keyExists( "text" )>
-                <cfloop array="#review.highlights.text#" item="highlight">
+        <cfif review.keyExists( "_formatted" ) && !structIsEmpty(review._formatted)>
+            <cfif review._formatted.keyExists( "text" )>
+                <!--- <cfloop array="#review._formatted.text#" item="highlight">
                     <p class="mb-4 highlight italic">...#highlight#...</p>
-                </cfloop>
+                </cfloop> --->
+                <p class="mb-4 highlight italic">...#review._formatted.text#...</p>
             </cfif>
         </cfif>
         <!--- <p class="mb-4">#review.text#</p> --->

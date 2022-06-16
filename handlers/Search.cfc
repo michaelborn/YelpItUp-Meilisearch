@@ -11,40 +11,19 @@ component extends="Main" {
         prc.reviews = [];
 
         if ( event.getValue( "query", "" ) != "" ){
-            var search = getInstance( "SearchBuilder@CbElasticSearch" )
-                            .new( "reviews" )
-                            .mustMatch( "text", event.getValue( "query" ) );
+            var result = getInstance( "Search@cbMeilisearch" )
+                            .searchWithPost(
+                                index = "reviews",
+                                q = event.getValue( "query" ),
+                                attributesToHighlight = [ "text" ],
+                                attributesToCrop = [ "text" ],
+                                cropLength = 10
+                            );
 
-            if ( event.getValue( "stars", "" ) != "" ){
-                search.filterTerm( "stars", event.getValue( "stars" ) );
-            }
-                            // writeDump( search.getDSL() );abort;
-                            /**
-                             * 🚀🚀 Uncomment for fuzzy search awesomeness! 😎😎
-                             * 
-                             * @cite https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html
-                             */
-                            // search.setQuery({
-                            //     "fuzzy": {
-                            //         "text": {
-                            //             "value": event.getValue( "query" ),
-                            //             "fuzziness" : "AUTO"
-                            //         }
-                            //     }
-                            // })
-                            results = search.highlight( {
-                                "fields" : {
-                                    "text" : {}
-                                }
-                            })
-                            .execute();
-            
-            // append each search result hit to the prc.reviews array
-            for ( result in results.getHits() ){
-                var memento = result.getMemento();
-                memento[ "highlights" ] = result.getHighlights();
-                prc.reviews.append( memento );
-            }
+            // if ( event.getValue( "stars", "" ) != "" ){
+            //     search.filterTerm( "stars", event.getValue( "stars" ) );
+            // }
+            prc.reviews = result.hits;
         }
     }
 }
