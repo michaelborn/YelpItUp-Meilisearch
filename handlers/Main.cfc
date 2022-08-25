@@ -6,11 +6,6 @@ component extends="coldbox.system.EventHandler"{
 		event.setView("main/index");
 	}
 
-	// Do something
-	function doSomething( event, rc, prc ){
-		relocate( "main.index" );
-	}
-
 	/************************************** IMPLICIT ACTIONS *********************************************/
 
 	function onAppInit( event, rc, prc ){

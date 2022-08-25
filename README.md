@@ -6,13 +6,28 @@ A sample Meilisearch app using the [Yelp dataset](https://www.yelp.com/dataset/)
 
 ## Getting Started
 
-1. Clone this repo - `git clone git@github.com:michaelborn/YelpItUp.git`
+1. Clone this repo - `git clone git@github.com:michaelborn/YelpItUp-Meilisearch.git`
 2. [Install CommandBox if you don't have it](https://commandbox.ortusbooks.com/getting-started-guide)
 3. Download the [Yelp dataset](https://www.yelp.com/dataset) and extract to `resources/downloads/yelp_dataset`
 4. Install dependencies - `box install`
-5. Start up a docker Meilisearch container - `docker run --detach --rm -p 7700:7700 -e MEILI_MASTER_KEY='ortus_is_awesome' -v $(pwd)/meili_data:/meili_data getmeili/meilisearch meilisearch --env="development"`
+5. [Start up a docker Meilisearch container](#launch-meilisearch)
 6. Copy `.env.example` to `.env`
 7. Start this app - `box start`
+
+### Launch Meilisearch
+
+```bash
+# Fetch the latest version of Meilisearch image from DockerHub
+docker pull getmeili/meilisearch:v0.28
+
+# Launch Meilisearch in development mode with a master key
+docker run --detach --rm \
+    -p 7700:7700 \
+    -e MEILI_MASTER_KEY='mySecretKey'\
+    -v $(pwd)/meili_data:/meili_data \
+    getmeili/meilisearch:v0.28 \
+    meilisearch --env="development"
+```
 
 ## The Good News
 

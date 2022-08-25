@@ -11,11 +11,13 @@
     "installPaths":{
         "coldbox":"coldbox/",
         "testbox":"testbox/",
-        "cbmeilisearch":"modules/cbmeilisearch/"
+        "cbmeilisearch":"modules/cbmeilisearch/",
+        "hyper":"modules/hyper/"
     },
     "dependencies":{
-        "coldbox":"^5.0.0",
-        "cbmeilisearch":"be"
+        "coldbox":"be",
+        "cbmeilisearch":"be",
+        "hyper":"^4.0.0"
     },
     "scripts":{}
 }

@@ -1,44 +1,24 @@
 component {
 
+    function getClient() provider="Client@cbmeilisearch"{}
+
     /**
      * Initialize the ElasticSearch index on app load/reinit
      */
     void function afterConfigurationLoad( event, interceptData ){
-        try {
-            setting requesttimeout="500";
-            var recreateIndex = true;
+        setting requesttimeout="500";
+        dropAndRecreateIndex();
 
-            if( recreateIndex ){
-                getIndexClient().delete( "reviews" );
-            }
-
-            // if ( !getESClient().indexExists( "reviews" ) ){
-                var result = getIndexClient().create(
-                    uid = "reviews",
-                    primaryKey = "review_id"
-                );
-            // }
-
-            if ( recreateIndex ){
-                populateReviews(
-                    file = getSetting( "contentPath" ) & "yelp_academic_dataset_review.json",
-                    index = "reviews",
-                    primaryKey = "review_id",
-                    maxToPopulate = 1000
-                );
-            }
-
-        } catch( io.searchbox.client.config.exception.CouldNotConnectException exception ){
-            writeOutput( "Unable to connect to ElasticSearch." );
-            abort;
-        }
+        populateReviews(
+            file = getSetting( "contentPath" ) & "yelp_academic_dataset_review.json",
+            maxToPopulate = 1000
+        );
     }
 
-    function populateReviews(
+    private function populateReviews(
         required string file,
-        required string index,
-        required string primaryKey,
-        numeric maxToPopulate = 100
+        numeric maxToPopulate = 100,
+        numeric maxBatchSize = 100
     ){
         if ( !fileExists( arguments.file ) ){
             throw( "File does not exist", "yelpItUp.interceptors.initIndex", arguments.file );
@@ -46,28 +26,58 @@ component {
 
         var fileObject = fileOpen( arguments.file );
         var populatedCount = 0;
-        while( !fileIsEOF( fileObject ) && populatedCount < arguments.maxToPopulate ){
-
+        while(
+            !fileIsEOF( fileObject ) 
+            && populatedCount < arguments.maxToPopulate
+        ){
             var json = fileReadLine( fileObject );
             if ( isJSON( json ) ){
-                var data = deSerializeJSON( json );
-
-                // clean up bad values
-                data["date"] = dateTimeFormat( lsParseDateTime( data["date"] ), "yyyy-MM-dd'T'HH:nn:ssXXX");
-                getDocumentClient().addOrReplace(
-                    index = arguments.index,
-                    documents = [ data ],
-                    primaryKey = primaryKey
+                /**
+                 * 1. ADD single document here.
+                 */
+                getClient().addDocuments(
+                    index = "reviews",
+                    documents = [ deserializeJSON( json ) ],
+                    primaryKey = "review_id"
                 );
 
                 populatedCount++;
             }
-            
+            /**
+             * 2. Add document batch via `documentBatch` array.
+             */
         }
         fileClose( fileObject );
     }
 
-    Indexes function getIndexClient() provider="Indexes@cbmeilisearch"{}
+    private function dropAndRecreateIndex(){
+        var msClient = getClient();
 
-    Documents function getDocumentClient() provider="Documents@cbmeilisearch"{}
+        /**
+         * 1. DROP old index
+         */
+        msClient.deleteIndex( "reviews" );
+
+        /**
+         * 2. CREATE new index
+         */
+        var task = msClient.createIndex(
+            uid = "reviews",
+            primaryKey = "review_id"
+        ).json();
+
+        /**
+         * 3. WAIT until index creation is completed
+         */
+        msClient.waitForTask( task.taskUid );
+
+        /**
+         * 4. APPLY new index settings
+         */
+        var result = msClient.updateSettings( "reviews", {
+            "filterableAttributes": [ "stars" ],
+            "sortableAttributes" : [ "stars", "useful", "date" ]
+            // other settings here...
+        } );
+    }
 }

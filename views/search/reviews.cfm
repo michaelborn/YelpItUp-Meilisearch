@@ -1,3 +1,8 @@
+<cfscript>
+    stars = event.getValue( "stars", "" );
+    queryText = event.getValue( "query", "" );
+    sortBy = event.getValue( "sortBy", "" );
+</cfscript>
 <cfoutput>
     <main>
         <div class="container mx-auto">
@@ -12,6 +17,21 @@
                     </p>
                 <cfelse>
                     <div class="reviews px-4 md:w-2/3">
+                        <form action="/search/reviews" class="flex justify-end my-4" x-data="{}" x-ref="form">
+                            <input type="hidden" name="query" value="#queryText#" />
+                            <input type="hidden" name="stars" value="#stars#" />
+
+                            <div class="flex flex-row w-64">
+                                <div class="flex flex-grow">
+                                    <label for="sortby" class="p-4 flex-grow">Sort</label>
+                                    <select name="sortby" id="sortby" @input="$refs.form.submit()" class="block p-4 bg-gray text-gray-900 flex-grow">
+                                        <option value=""<cfif sortBy == ""> selected</cfif>>Most relevant first</option>
+                                        <option value="useful:desc"<cfif sortBy == "useful:desc"> selected</cfif>>Most useful first</option>
+                                        <option value="stars:desc"<cfif sortBy == "stars:desc"> selected</cfif>>Most stars first</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
                         #renderView(
                             view = "search/review",
                             collection="#prc.reviews#"

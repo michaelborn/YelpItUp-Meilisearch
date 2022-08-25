@@ -1,4 +1,5 @@
 <cfoutput>
+    <!--- <cfdump var="#review#" /><cfabort /> --->
     <article class="p-6 border-solid border-b-2">
         <cfif review.keyExists( "_formatted" ) && !structIsEmpty(review._formatted)>
             <cfif review._formatted.keyExists( "text" )>

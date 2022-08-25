@@ -1,5 +1,5 @@
 <cfscript>
-    stars = event.getValue( "stars", "" );
+    stars = event.getValue( "stars", "0" );
     queryText = event.getValue( "query", "" );
 </cfscript>
 <cfoutput>
