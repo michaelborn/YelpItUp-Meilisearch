@@ -1,5 +1,8 @@
 component extends="Main" {
 
+    /**
+     * INJECT cbMeilisearch API client
+     */
     property name="msClient" inject="Client@cbMeilisearch";
 
     /**
@@ -13,6 +16,9 @@ component extends="Main" {
         prc.reviews = [];
 
         if ( event.getValue( "query", "" ) != "" ){
+            /**
+             * SEARCH
+             */
             var searchOpts = {
                 "q"                    : event.getValue( "query", "" ),
                 "filter"               : "stars >= #event.getValue( 'stars', 0 )#",
@@ -22,6 +28,10 @@ component extends="Main" {
                 searchOpts[ "sort" ] = [ event.getValue( "sortBy", "" ) ];
             }
             var result = msClient.search( "reviews", searchOpts);
+
+            /**
+             * ERROR HANDLING
+             */
             if( result.isError() ){
                 throw(
                     message = "MeilisearchAPIException",
@@ -30,6 +40,10 @@ component extends="Main" {
                     extendedInfo = serializeJSON( result.getMemento() )
                 );
             }
+
+            /**
+             * SET search results
+             */
             prc.reviews = result.json().hits;
         }
     }
