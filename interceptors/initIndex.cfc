@@ -1,7 +1,5 @@
 component {
 
-    function getClient() provider="Client@cbmeilisearch"{}
-
     /**
      * Initialize the ElasticSearch index on app load/reinit
      */
@@ -18,41 +16,29 @@ component {
     }
 
     private function ensureMeilisearchReachable(){
-        var msClient = getClient();
-        var response = msClient.version();
-
-        msClient.parseAndThrow( response );
+        /**
+         * 1. Check Meilisearch version
+         * 2. Call parseAndThrow() to throw if connection error
+         */
     }
 
     private function dropAndRecreateIndex(){
-        var msClient = getClient();
 
         /**
          * 1. DROP old index
          */
-        msClient.deleteIndex( "reviews" );
 
         /**
          * 2. CREATE new index
          */
-        var task = msClient.createIndex(
-            uid = "reviews",
-            primaryKey = "review_id"
-        ).json();
 
         /**
          * 3. WAIT until index creation is completed
          */
-        msClient.waitForTask( task.taskUid );
 
         /**
          * 4. APPLY new index settings
          */
-        var result = msClient.updateSettings( "reviews", {
-            "filterableAttributes": [ "stars" ],
-            "sortableAttributes" : [ "stars", "useful", "date" ]
-            // other settings here...
-        } );
     }
 
     private function populateReviews(
@@ -61,7 +47,7 @@ component {
         numeric maxBatchSize = 100
     ){
         if ( !fileExists( arguments.file ) ){
-            throw( "File does not exist", "yelpItUp.interceptors.initIndex", arguments.file );
+            throw( "File does not exist #arguments.file#" );
         }
 
         var fileObject = fileOpen( arguments.file );
@@ -75,11 +61,6 @@ component {
                 /**
                  * 1. ADD single document here.
                  */
-                getClient().addDocuments(
-                    index = "reviews",
-                    documents = [ deserializeJSON( json ) ],
-                    primaryKey = "review_id"
-                );
 
                 populatedCount++;
             }

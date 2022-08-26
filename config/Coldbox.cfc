@@ -61,11 +61,9 @@
 		}
 
 		moduleSettings = {
-			"cbMeilisearch" : {
-				"MEILISEARCH_HOST"      : "localhost",
-				"MEILISEARCH_PORT"      : 7700,
-				"MEILISEARCH_MASTER_KEY": "mySecretKey"
-			}
+			/**
+			 * cbMeilisearch config goes here
+			 */
 		};
 	}
 
