@@ -47,12 +47,12 @@ MEILISEARCH_MASTER_KEY=mySecretKey
 ## Ensuring Meilisearch is Reachable
 
 ```js
-var result = getClient().version();
-if ( !result.isSuccess() ){
+var response = getClient().version();
+if ( !response.isSuccess() ){
     throw(
         message = "Meilisearch Unavailable",
         type="MeilisearchConnectionFailed",
-        extendedInfo = serializeJSON( result.getMemento() )
+        extendedInfo = serializeJSON( response.getMemento() )
     );
 }
 ```
@@ -84,7 +84,7 @@ var task = msClient.createIndex(
 msClient.addDocuments(
     index = "reviews",
     documents = [ deSerializeJSON( json ) ],
-    primaryKey = primaryKey
+    primaryKey = "review_id"
 );
 ```
 
@@ -93,13 +93,13 @@ msClient.addDocuments(
 Pretty easy - call `client.search()`, pass an index uid, and a struct of options.
 
 ```js
-var result = msClient.search( "reviews", {});
+var response = msClient.search( "reviews", {});
 ```
 
 Use the `.json().hits` to grab the actual result from a successful response.
 
 ```js
-prc.reviews = result.json().hits;
+prc.reviews = response.json().hits;
 ```
 
 A NOT successful response, though, may not be JSON at all. We need proper error handling:
@@ -107,13 +107,13 @@ A NOT successful response, though, may not be JSON at all. We need proper error 
 ### Error Handling
 
 ```js
-var result = msClient.search( "reviews", {});
-if( result.isError() ){
+var response = msClient.search( "reviews", {});
+if( response.isError() ){
     throw(
         message = "MeilisearchAPIException",
         type = "MeilisearchAPIException",
-        detail = result.getData(),
-        extendedInfo = serializeJSON( result.getMemento() )
+        detail = response.getData(),
+        extendedInfo = serializeJSON( response.getMemento() )
     );
 }
 ```
@@ -123,7 +123,7 @@ if( result.isError() ){
 To search with a filter, use the `filter` parameter:
 
 ```js
-var result = msClient.search( "reviews", {
+var response = msClient.search( "reviews", {
     "q"                     = event.getValue( "query", "" ),
     "filter"                = "stars >= #event.getValue( 'stars', 0 )#"
 } );
@@ -136,13 +136,13 @@ This will fail because we didn't set the `filterableAttributes` on the index.
 To set this single setting:
 
 ```js
-var result = msClient.updateFilterableAttributes( "reviews", [ "stars" ] );
+var response = msClient.updateFilterableAttributes( "reviews", [ "stars" ] );
 ```
 
 To set this along with some other settings:
 
 ```js
-var result = msClient.updateSettings( "reviews", {
+var response = msClient.updateSettings( "reviews", {
     "filterableAttributes": [ "stars" ],
     // other settings here...
 } );
@@ -163,7 +163,7 @@ msClient.waitForTask( task.taskUid );
 To show MOST useful first:
 
 ```js
-var result = msClient.search( "reviews", {
+var response = msClient.search( "reviews", {
     "q"   : event.getValue( "query", "" ),
     "sort": [ "useful:desc" ]
 });
@@ -172,7 +172,7 @@ var result = msClient.search( "reviews", {
 To show LEAST useful first:
 
 ```js
-var result = msClient.search( "reviews", {
+var response = msClient.search( "reviews", {
     "q"   : event.getValue( "query", "" ),
     "sort": [ "useful:asc" ]
 });
@@ -181,7 +181,7 @@ var result = msClient.search( "reviews", {
 To use the selector:
 
 ```js
-var result = msClient.search( "reviews", {
+var response = msClient.search( "reviews", {
     "q"                    : event.getValue( "query", "" ),
     "attributesToHighlight": [ "text" ],
     "sort"                 : [ event.getValue( "sortBy", "" ) ]
@@ -201,14 +201,14 @@ var searchOpts = {
 if ( event.getValue( "sortBy", "" ) != "" ){
     searchOpts[ "sort" ] = [ event.getValue( "sortBy", "" ) ];
 }
-var result = msClient.search( "reviews", searchOpts);
+var response = msClient.search( "reviews", searchOpts);
 ```
 
 ### Set Sortable Attributes
 
 
 ```js
-var result = msClient.updateSettings( "reviews", {
+var response = msClient.updateSettings( "reviews", {
     "filterableAttributes": [ "stars" ],
     "sortableAttributes" : [ "stars", "useful", "date" ]
     // other settings here...
@@ -220,13 +220,13 @@ var result = msClient.updateSettings( "reviews", {
 To highlight matching terms, use the `attributesToHighlight` parameter:
 
 ```js
-var result = msClient.search( "reviews", {
+var response = msClient.search( "reviews", {
     "q"                     = event.getValue( "query", "" ),
     "attributesToHighlight" : [ "text" ]
 });
 ```
 
-Then you'll see Meilisearch returns the `_formatted` struct along with each result. Each highlighted term is wrapped in `<em></em>` tags.
+Then you'll see Meilisearch returns the `_formatted` struct along with each document in the response. Each highlighted term is wrapped in `<em></em>` tags.
 
 ## Advanced (large batch) Document Imports
 

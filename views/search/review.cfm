@@ -3,9 +3,6 @@
     <article class="p-6 border-solid border-b-2">
         <cfif review.keyExists( "_formatted" ) && !structIsEmpty(review._formatted)>
             <cfif review._formatted.keyExists( "text" )>
-                <!--- <cfloop array="#review._formatted.text#" item="highlight">
-                    <p class="mb-4 highlight italic">...#highlight#...</p>
-                </cfloop> --->
                 <p class="mb-4 highlight italic">...#review._formatted.text#...</p>
             </cfif>
         <cfelse>

@@ -19,7 +19,7 @@
                 <div class="flex">
                     <label for="stars" class="p-4 flex-grow">search by stars</label>
                     <select name="stars" id="stars" class="block p-4 bg-gray text-gray-900 flex-grow">
-                        <option value=""> Any </option>
+                        <option value="0"> Any </option>
                         <cfloop from="1" to="5" index="count">
                             <option value="#count#" <cfif stars == count> selected</cfif>>#count#</option>
                         </cfloop>
