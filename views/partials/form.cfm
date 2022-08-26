@@ -13,7 +13,7 @@
                         <input type="search" id="reviewText" name="query" class="block p-4 w-full bg-gray-200 text-gray-900 flex-grow" placeholder="search text" value="#encodeForHTMLAttribute( queryText )#">
                     </div>
                     <div>
-                        <input type="submit" class="bg-blue-700 text-white p-4">
+                        <input type="submit" value="Search" class="bg-blue-700 text-white p-4">
                     </div>
                 </div>
                 <div class="flex">

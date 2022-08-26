@@ -17,7 +17,15 @@
         <header class="bg-gray-300 block w-full py-10">
             <div class="container mx-auto px-4">
                 <div class="flex justify-between">
-                    <h1 class="text-3xl flex-shrink"><a href="/">YelpItUp</a></h1>
+                    <h1 class="text-3xl flex-shrink mr-4 py-2"><a href="/">YelpItUp</a></h1>
+
+                    <nav class="flex-grow mx-24">
+                        <ul class="block flex w-full">
+                            <li><a href="/" class="block p-4 hover:bg-blue-800 hover:text-white">Home</a></li>
+                            <li><a href="/search/reviews" class="block p-4 hover:bg-blue-800 hover:text-white">Search</a></li>
+                            <li><a href="/keys" class="block p-4 hover:bg-blue-800 hover:text-white">Keys</a></li>
+                        </ul>
+                    </nav>
                     
                     #renderView( "partials/minimal_form" )#
                 </div>
