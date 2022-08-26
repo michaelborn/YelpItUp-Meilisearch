@@ -7,12 +7,52 @@ component {
      */
     void function afterConfigurationLoad( event, interceptData ){
         setting requesttimeout="500";
+
+        ensureMeilisearchReachable();
         dropAndRecreateIndex();
 
         populateReviews(
             file = getSetting( "contentPath" ) & "yelp_academic_dataset_review.json",
             maxToPopulate = 1000
         );
+    }
+
+    private function ensureMeilisearchReachable(){
+        var msClient = getClient();
+        var response = msClient.version();
+
+        msClient.parseAndThrow( response );
+    }
+
+    private function dropAndRecreateIndex(){
+        var msClient = getClient();
+
+        /**
+         * 1. DROP old index
+         */
+        msClient.deleteIndex( "reviews" );
+
+        /**
+         * 2. CREATE new index
+         */
+        var task = msClient.createIndex(
+            uid = "reviews",
+            primaryKey = "review_id"
+        ).json();
+
+        /**
+         * 3. WAIT until index creation is completed
+         */
+        msClient.waitForTask( task.taskUid );
+
+        /**
+         * 4. APPLY new index settings
+         */
+        var result = msClient.updateSettings( "reviews", {
+            "filterableAttributes": [ "stars" ],
+            "sortableAttributes" : [ "stars", "useful", "date" ]
+            // other settings here...
+        } );
     }
 
     private function populateReviews(
@@ -48,36 +88,5 @@ component {
              */
         }
         fileClose( fileObject );
-    }
-
-    private function dropAndRecreateIndex(){
-        var msClient = getClient();
-
-        /**
-         * 1. DROP old index
-         */
-        msClient.deleteIndex( "reviews" );
-
-        /**
-         * 2. CREATE new index
-         */
-        var task = msClient.createIndex(
-            uid = "reviews",
-            primaryKey = "review_id"
-        ).json();
-
-        /**
-         * 3. WAIT until index creation is completed
-         */
-        msClient.waitForTask( task.taskUid );
-
-        /**
-         * 4. APPLY new index settings
-         */
-        var result = msClient.updateSettings( "reviews", {
-            "filterableAttributes": [ "stars" ],
-            "sortableAttributes" : [ "stars", "useful", "date" ]
-            // other settings here...
-        } );
     }
 }
