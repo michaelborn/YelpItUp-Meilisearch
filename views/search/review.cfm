@@ -8,8 +8,9 @@
                 </cfloop> --->
                 <p class="mb-4 highlight italic">...#review._formatted.text#...</p>
             </cfif>
+        <cfelse>
+            <p class="mb-4">#review.text#</p>
         </cfif>
-        <!--- <p class="mb-4">#review.text#</p> --->
         <div class="review__footer flex flex-row justify-start">
             <div class="stars px-2">
                 <cfloop from="1" to="#int(review.stars)#" index="starCount">
