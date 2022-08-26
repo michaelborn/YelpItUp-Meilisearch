@@ -2,12 +2,59 @@
 
 ## Meilisearch Startup
 
+With no API key:
+
+```bash
+docker run --detach --rm \
+    -p 7700:7700 \
+    getmeili/meilisearch \
+    meilisearch --env="development"
+```
+
+With an API key:
+
 ```bash
 docker run --detach --rm \
     -p 7700:7700 \
     -e MEILI_MASTER_KEY='mySecretKey'\
     getmeili/meilisearch \
     meilisearch --env="development"
+```
+
+## Connecting to Meilisearch
+
+Set some config in `config/ColdBox.cfc`:
+
+```js
+moduleSettings = {
+    "cbMeilisearch" : {
+        "MEILISEARCH_HOST" : "localhost",
+        "MEILISEARCH_PORT" : 7700,
+        "MEILISEARCH_MASTER_KEY" : ""
+    }
+};
+```
+
+Or in the `.env`:
+
+```bash
+# CBElasticsearch module configuration
+MEILISEARCH_HOST=http://127.0.0.1
+MEILISEARCH_PORT=7700
+MEILISEARCH_MASTER_KEY=mySecretKey
+```
+
+## Ensuring Meilisearch is Reachable
+
+```js
+var result = getClient().version();
+if ( !result.isSuccess() ){
+    throw(
+        message = "Meilisearch Unavailable",
+        type="MeilisearchConnectionFailed",
+        extendedInfo = serializeJSON( result.getMemento() )
+    );
+}
 ```
 
 ## Managing Indexes
