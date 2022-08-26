@@ -59,6 +59,14 @@
 		settings = {
 			"contentPath" : expandPath( "resources/downloads/yelp_dataset/" )
 		}
+
+		moduleSettings = {
+			"cbMeilisearch" : {
+				"MEILISEARCH_HOST"      : "localhost",
+				"MEILISEARCH_PORT"      : 7700,
+				"MEILISEARCH_MASTER_KEY": "mySecretKey"
+			}
+		};
 	}
 
 	/**
