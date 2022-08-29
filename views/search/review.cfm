@@ -15,7 +15,7 @@
                 </cfloop>
             </div>
             <div class="useful px-2">
-                <i class="fa fa-thumbs-up text-yellow-800" aria-hidden="true"></i> <span class="text-gray-700 italic">#int(review.useful)# people found this review helpful</span>
+                <i class="fa fa-thumbs-up text-yellow-800" aria-hidden="true"></i> <span class="text-gray-700 italic">#int(review.useful)# people found this review useful</span>
             </div>
         </div>
     </article>
